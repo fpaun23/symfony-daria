@@ -1,3 +1,21 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+company_controller:
+    path: /company
+    controller: App\Controller\CompanyController::loadTemplate
+    methods: GET
+
+company_controller_add:
+    path: /comapany/add
+    controller: App\Controller\CompanyController::add
+    methods: GET
+
+contact_controller:
+    path: /contact
+    controller: App\Controller\ContactController::loadTemplate
+
+home_controller:
+    path: /home
+    controller: App\Controller\HomeController::loadTemplate
