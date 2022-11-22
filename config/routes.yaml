@@ -5,12 +5,10 @@ controllers:
 company_controller:
     path: /company
     controller: App\Controller\CompanyController::loadTemplate
-    methods: GET
 
 company_controller_add:
-    path: /comapany/add
+    path: /company/add
     controller: App\Controller\CompanyController::add
-    methods: GET
 
 contact_controller:
     path: /contact
