@@ -4,21 +4,15 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Request;
 
 class CompanyController extends AbstractController
 {
-    #[Route('/')]
-
     public function loadTemplate():Response
     {
         return $this->render('company/index.html.twig', ['name'=>'Welcome']);
     }
-  
-   // #[Route('/add/{name}')]
-    
-    // public function add():Response
-    // {
-    //     return $this->render('add_company.html.twig');
-    // }
 }
