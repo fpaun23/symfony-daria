@@ -19,6 +19,7 @@ class CompanyController extends AbstractController
     public $saveData;
     public $description;
     private $logger;
+    
 
     public function __construct(LoggerInterface $logger)
     {
@@ -46,7 +47,7 @@ class CompanyController extends AbstractController
             $description= $data['description'];
 
             $this->logger->error(
-                "error saving data",
+                "Data is saved!",
                 [json_encode(['name' => $name, 'description' => $description])]
             );
             return $this->redirectToRoute('company_controller');
