@@ -1,13 +1,13 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
+
 <body>
-    <h1>{{name}}</h1>
+    <h1>welcome</h1>
 
-    <div>
-    mytodolist
-    </div>
-
+     {% if form is defined and form is not null %}
+        <h1> {{ form(form) }}</h1>
+     {% endif %}
 </body>
 
 {% endblock %}
