@@ -9,7 +9,12 @@ class HomeController extends AbstractController
 {
     public $contact = 'contact';
     public $company = 'company';
-
+    
+    /**
+     * loadTemplate
+     *
+     * @return Response
+     */
     public function loadTemplate(): Response
     {
         return $this->render('home/index.html.twig', [
