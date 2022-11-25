@@ -5,6 +5,9 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * class for home controller
+ */
 class HomeController extends AbstractController
 {
     public $contact = 'contact';
