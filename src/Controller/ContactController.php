@@ -6,8 +6,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
-use App\DataValidation\DataValidatorInterface;
+use App\Service\DataValidatorInterface;
 
+/**
+ * class for contact controller
+ */
 class ContactController extends AbstractController
 {
     public $title = 'ContactControllerPHP';

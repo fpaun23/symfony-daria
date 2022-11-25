@@ -1,9 +1,9 @@
 <?php
 
-namespace App\DataValidation;
+namespace App\Service;
 
 use App\ConstantContact;
-use App\DataValidation\DataValidatorInterface;
+use App\Service\DataValidatorInterface;
 
 class DataValidatorContact implements DataValidatorInterface
 {    

@@ -12,6 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
 
+/**
+ * class for company controller
+ */
 class CompanyController extends AbstractController
 {
     private $logger;
