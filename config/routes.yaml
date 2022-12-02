@@ -7,19 +7,21 @@ company_controller:
     controller: App\Controller\CompanyController::loadTemplate
 
 company_controller_add:
-    path: /company/add
-    controller: App\Controller\CompanyController::add
+    path: /company/addCompany
+    controller: App\Controller\CompanyController::addCompany
     methods: POST
 
-contact_controller:
-    path: /contact
-    controller: App\Controller\ContactController::loadTemplate
+company_controller_list:
+    path: /company/listCompany
+    controller: App\Controller\CompanyController::listCompany
+    methods: GET
 
-contact_controller_add:
-    path: /contact/add
-    controller: App\Controller\ContactController::addContact
-    methods: POST
+company_controller_update:
+    path: /company/updateCompany/{id}
+    controller: App\Controller\CompanyController::updateCompany
+    methods: PUT
 
-home_controller:
-    path: /home
-    controller: App\Controller\HomeController::loadTemplate
+company_controller_delete:
+    path: /company/deleteCompany/{id}
+    controller: App\Controller\CompanyController::deleteCompany
+    methods: DELETE
