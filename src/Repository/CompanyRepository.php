@@ -20,40 +20,85 @@ class CompanyRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Company::class);
     }
-
-    public function save(Company $entity, bool $flush = false): void
+    /**
+     * save a new company each time
+     *
+     * @param  mixed $entity
+     * @return void
+     */
+    public function save(Company $entity): bool
     {
         $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        $this->getEntityManager()->flush();
+        return $entity -> getId() > 0;
     }
-
-    public function remove(Company $entity, bool $flush = false): void
+    /**
+     * removes a company
+     *
+     * @param  mixed $entity
+     * @return void
+     */
+    public function remove(Company $entity): void
     {
         $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        $this->getEntityManager()->flush();
     }
+    /**
+     * update
+     *
+     * @param  mixed $id
+     * @param  mixed $params
+     * @return int
+     */
+    public function update(int $id, array $params): int
+    {
+        $queryBuilder = $this ->createQueryBuilder('c');
 
-//    /**
-//     * @return Company[] Returns an array of Company objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+        $nbUpdatedRows = $queryBuilder ->update()
+            ->set('c.name', ':companyName')
+            ->where('c.id = :companyId')
+            ->setParameter('companyName', $params['name'])
+            ->setParameter('companyId', $id)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->execute();
 
+            return $nbUpdatedRows;
+    }
+    /**
+     * delete
+     *
+     * @param  mixed $id
+     * @param  mixed $params
+     * @return int
+     */
+    public function delete(int $id, array $params): int
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        $nbUpdatedRows = $queryBuilder ->delete()
+            ->delete('Company', 'c')
+            ->where('c.id = :companyId')
+            ->setParameter('companyId', $id)
+            ->getQuery()
+            ->execute();
+
+            return $nbUpdatedRows;
+    }
+    public function add(int $id, array $params): int
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        $nbUpdatedRows = $queryBuilder ->add()
+            ->select('c.name', ':companyName')
+            ->where('c.id = :companyId')
+            ->setParameter('companyName', $params['name'])
+            ->setParameter('companyId', $id)
+            ->getQuery()
+            ->execute();
+
+            return $nbUpdatedRows;
+    }
 //    public function findOneBySomeField($value): ?Company
 //    {
 //        return $this->createQueryBuilder('c')
