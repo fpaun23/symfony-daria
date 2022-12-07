@@ -30,7 +30,7 @@ class CompanyController extends AbstractController
      */
     public function __construct(CompanyRepository $companyRepository)
     {
-        $this->$companyRepository = $companyRepository;
+        $this->companyRepository = $companyRepository;
     }
     /**
      * adds Company to the db
@@ -42,7 +42,7 @@ class CompanyController extends AbstractController
     {
         $name = $request->get('name');
         $company = new Company();
-        $company->setName('.Vue');
+        $company->setName($name);
         $companySaved = $this->companyRepository->save($company);
 
         return new JsonResponse(
@@ -69,17 +69,76 @@ class CompanyController extends AbstractController
             ]
         );
     }
-    // /**
-    //  * lists the companies from the db
-    //  *
-    //  * @param  mixed $doctrine
-    //  * @param  mixed $id
-    //  * @return Response
-    //  */
-    // public function listCompany(ManagerRegistry $doctrine): Response
-    // {
-    //     $company = $doctrine->getRepository(Company::class)->findAll();
-    //     //var_dump($company);die;
-    //     return new Response(json_encode($company));
-    // }
+     /**
+     * deleteCompany
+     *
+     * @param  mixed $id
+     * @return Response
+     */
+    public function deleteCompany(int $id): Response
+    {
+        $companyForDelete = $this->companyRepository->find($id);
+        $companyDeleted = $this->companyRepository->remove($companyForDelete);
+
+        return new JsonResponse(
+            [
+                'rows_deleted' => $companyDeleted
+            ]
+        );
+    }
+    /**
+     * listCompany
+     *
+     * @return Response
+     */
+    public function listCompany(): Response
+    {
+        $company = $this->companyRepository->listCompany();
+
+        return new JsonResponse(
+            [
+                'rows' => $company
+            ]
+        );
+    }
+    /**
+     * companyId
+     *
+     * @param  mixed $id
+     * @return Response
+     */
+    public function companyId(int $id): Response
+    {
+        $company = $this->companyRepository->getCompanyId($id);
+
+        return new JsonResponse(
+            [
+                'rows' => $company
+            ]
+        );
+    }
+     /**
+     * companyName
+     *
+     * @param  mixed $name
+     * @return Response
+     */
+    public function companyName(string $name): Response
+    {
+        $company = $this->companyRepository->getCompanyName($name);
+
+        return new JsonResponse($company);
+    }
+    /**
+     * likeCompanyName
+     *
+     * @param  mixed $name
+     * @return Response
+     */
+    public function likeCompanyName(string $name): Response
+    {
+        $company = $this->companyRepository->getLikeCompanyName($name);
+
+        return new JsonResponse($company);
+    }
 }

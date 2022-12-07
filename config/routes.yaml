@@ -24,12 +24,18 @@ company_controller_delete:
     path: /company/deleteCompany/{id}
     controller: App\Controller\CompanyController::deleteCompany
     methods: DELETE
-app_company_companyId:
+
+company_companyId:
     path: /company/{id}
     controller: App\Controller\CompanyController::companyId
     methods: GET
 
-app_company_companyName:
+company_companyName:
     path: /company/name/{name}
     controller: App\Controller\CompanyController::companyName
+    methods: GET
+    
+company_like_companyName:
+    path: /company/like/{name}
+    controller: App\Controller\CompanyController::likeCompanyName
     methods: GET

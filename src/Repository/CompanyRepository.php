@@ -57,9 +57,8 @@ class CompanyRepository extends ServiceEntityRepository
         $nbUpdatedRows = $queryBuilder ->update()
             ->set('c.name', ':companyName')
             ->where('c.id = :companyId')
-            ->setParameter('companyName', $params['name'])
+            ->setParameter('companyName', 'vue')
             ->setParameter('companyId', $id)
-            ->orderBy('c.id', 'ASC')
             ->getQuery()
             ->execute();
 
@@ -72,10 +71,9 @@ class CompanyRepository extends ServiceEntityRepository
      * @param  mixed $params
      * @return int
      */
-    public function delete(int $id, array $params): int
+    public function delete(int $id): int
     {
         $queryBuilder = $this->createQueryBuilder('c');
-
         $nbUpdatedRows = $queryBuilder ->delete()
             ->delete('Company', 'c')
             ->where('c.id = :companyId')
@@ -85,19 +83,20 @@ class CompanyRepository extends ServiceEntityRepository
 
             return $nbUpdatedRows;
     }
-    public function add(int $id, array $params): int
+    /**
+     * listCompany
+     *
+     * @return array
+     */
+    public function listCompany(): array
     {
         $queryBuilder = $this->createQueryBuilder('c');
 
-        $nbUpdatedRows = $queryBuilder ->add()
-            ->select('c.name', ':companyName')
-            ->where('c.id = :companyId')
-            ->setParameter('companyName', $params['name'])
-            ->setParameter('companyId', $id)
+        $company = $queryBuilder
             ->getQuery()
-            ->execute();
+            ->getArrayResult();
 
-            return $nbUpdatedRows;
+        return $company;
     }
 //    public function findOneBySomeField($value): ?Company
 //    {
