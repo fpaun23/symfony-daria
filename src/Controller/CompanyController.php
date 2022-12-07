@@ -30,7 +30,7 @@ class CompanyController extends AbstractController
      */
     public function __construct(CompanyRepository $companyRepository)
     {
-        $this-> $companyRepository = $companyRepository;
+        $this->$companyRepository = $companyRepository;
     }
     /**
      * adds Company to the db
