@@ -1,78 +1,141 @@
 <?php
 
-declare (strict_types = 1);
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
+use App\Entity\Company;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\CompanyRepository;
+use App\Validator\CompanyValidator;
 
 /**
  * class for company controller
  */
 class CompanyController extends AbstractController
 {
-    private $logger;
-    
-    
+    private CompanyRepository $companyRepository;
     /**
      * __construct
      *
-     * @param  mixed $logger
+     * @param  mixed $companyRepository
      * @return void
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(CompanyRepository $companyRepository)
     {
-        $this->logger = $logger;
+        $this->companyRepository = $companyRepository;
     }
-    
     /**
-     * loadTemplate
-     *
-     * @return Response
-     */
-    public function loadTemplate():Response
-    {
-        return $this->render('company/index.html.twig', ['name'=>'Welcome']);
-    }
-    
-    /**
-     * add fields for the form and the submitted data in varlog
+     * add
      *
      * @param  mixed $request
      * @return Response
      */
-    public function add(Request $request):Response
+    public function addCompany(Request $request): Response
     {
-        $this->form = $this->createFormBuilder()
-            ->add('name', TextType::class)
-            ->add('description', TextType::class)
-            ->add('email', EmailType::class)
-            ->add('saveData', SubmitType::class, ['label' => 'Create Company'])
-            ->getForm();
-
-        $this->form->handleRequest($request);
-
-        if ($this->form->isSubmitted() && $this->form->isValid()) {
-            $data=$this->form->getData();
-            $name=$data['name'];
-            $description= $data['description'];
-            $email= $data['email'];
-
-
-            $this->logger->error(
-                "Data is saved!",
-                [json_encode(['name' => $name, 'description' => $description,'email'=>$email])]
+        $name = $request->get('name');
+        $company = new Company();
+        $company->setName($name);
+        $companySaved = $this->companyRepository->save($company);
+        return new JsonResponse(
+            [
+             'saved' => $companySaved
+            ]
+        );
+    }
+    /**
+     * updateCompany
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return Response
+     */
+    public function updateCompany(Request $request, int $id): Response
+    {
+        $requestParams = $request->query->all();
+        $updateResult = $this->companyRepository->updateCompany($id, $requestParams);
+        return new JsonResponse(
+            [
+                'rows_updated' => $updateResult
+            ]
+        );
+    }
+    /**
+     * deleteCompany
+     *
+     * @param  mixed $id
+     * @return Response
+     */
+    public function deleteCompany(int $id): Response
+    {
+            $companyForDelete = $this->companyRepository->find($id);
+            $companyDeleted = $this->companyRepository->remove($companyForDelete);
+            return new JsonResponse(
+                [
+                    'rows_deleted' => $companyDeleted
+                ]
             );
-            return $this->redirectToRoute('company_controller');
-        }
-        return $this->render('company/index.html.twig', [
-            'form'=>$this->form->createView()
-        ]);
+    }
+    /**
+     * listCompany
+     *
+     * @return Response
+     */
+    public function listCompany(): Response
+    {
+            $companyList = $this->companyRepository->listCompany();
+
+            return new JsonResponse(
+                [
+                    'rows' => $companyList
+                ]
+            );
+    }
+    /**
+     * getCompanyById
+     *
+     * @param  mixed $id
+     * @return Response
+     */
+    public function getCompanyById(int $id): Response
+    {
+        $companybyId = $this->companyRepository->getCompanyId($id);
+        return new JsonResponse(
+            [
+                'rows' => $companybyId
+            ]
+        );
+    }
+    /**
+     * getCompanyByName
+     *
+     * @param  mixed $name
+     * @return Response
+     */
+    public function getCompanyByName(string $name): Response
+    {
+        $companyByName = $this->companyRepository->getCompanyName($name);
+        return new JsonResponse($companyByName);
+    }
+    /**
+     * getCompanyNameLike
+     *
+     * @param  mixed $name
+     * @return Response
+     */
+    public function getCompanyNameLike(string $name): Response
+    {
+            $companyLike = $this->companyRepository->getCompanyLike($name);
+            return new JsonResponse(
+                [
+                    'rows' => $companyLike
+                ]
+            );
     }
 }

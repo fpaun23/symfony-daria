@@ -8,18 +8,36 @@ company_controller:
 
 company_controller_add:
     path: /company/add
-    controller: App\Controller\CompanyController::add
+    controller: App\Controller\CompanyController::addCompany
     methods: POST
 
-contact_controller:
-    path: /contact
-    controller: App\Controller\ContactController::loadTemplate
+company_controller_list:
+    path: /company/list
+    controller: App\Controller\CompanyController::listCompany
+    methods: GET
 
-contact_controller_add:
-    path: /contact/add
-    controller: App\Controller\ContactController::addContact
-    methods: POST
+company_controller_update:
+    path: /company/update/{id}
+    controller: App\Controller\CompanyController::updateCompany
+    methods: PUT
 
-home_controller:
-    path: /home
-    controller: App\Controller\HomeController::loadTemplate
+company_controller_delete:
+    path: /company/delete/{id}
+    controller: App\Controller\CompanyController::deleteCompany
+    methods: DELETE
+
+company_companyId:
+    path: /company/{id}
+    controller: App\Controller\CompanyController::getCompanyById
+    methods: GET
+
+company_companyName:
+    path: /company/name/{name}
+    controller: App\Controller\CompanyController::getCompanyByName
+    methods: GET
+    
+company_like_companyName:
+    path: /company/like/{name}
+    controller: App\Controller\CompanyController::getCompanyNameLike
+    methods: GET
+ 
