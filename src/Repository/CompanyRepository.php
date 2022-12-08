@@ -16,6 +16,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CompanyRepository extends ServiceEntityRepository
 {
+    /**
+     * __construct
+     *
+     * @param  mixed $registry
+     * @return void
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Company::class);
@@ -50,33 +56,14 @@ class CompanyRepository extends ServiceEntityRepository
      * @param  mixed $params
      * @return int
      */
-    public function update(int $id, array $params): int
+    public function updateCompany(int $id, array $params): int
     {
         $queryBuilder = $this ->createQueryBuilder('c');
 
         $nbUpdatedRows = $queryBuilder ->update()
             ->set('c.name', ':companyName')
             ->where('c.id = :companyId')
-            ->setParameter('companyName', 'vue')
-            ->setParameter('companyId', $id)
-            ->getQuery()
-            ->execute();
-
-            return $nbUpdatedRows;
-    }
-    /**
-     * delete
-     *
-     * @param  mixed $id
-     * @param  mixed $params
-     * @return int
-     */
-    public function delete(int $id): int
-    {
-        $queryBuilder = $this->createQueryBuilder('c');
-        $nbUpdatedRows = $queryBuilder ->delete()
-            ->delete('Company', 'c')
-            ->where('c.id = :companyId')
+            ->setParameter('companyName', $params['name'])
             ->setParameter('companyId', $id)
             ->getQuery()
             ->execute();
@@ -95,6 +82,59 @@ class CompanyRepository extends ServiceEntityRepository
         $company = $queryBuilder
             ->getQuery()
             ->getArrayResult();
+
+        return $company;
+    } 
+    /**
+     * getCompanyId
+     *
+     * @param  mixed $id
+     * @return array
+     */
+    public function getCompanyId(int $id): array
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $company = $queryBuilder
+            ->select('c.name')
+            ->where("c.id = $id")
+            ->getQuery()
+            ->execute();
+
+        return $company;
+    } 
+    /**
+     * getCompanyName
+     *
+     * @param  mixed $name
+     * @return array
+     */
+    public function getCompanyName(string $name): array
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $company = $queryBuilder
+        ->select('c.name')
+        ->where("c.name = :companyName")
+        ->setParameter('companyName', $name)
+        ->getQuery()
+        ->execute();
+
+        return $company;
+    }
+    /**
+     * getCompanyLike
+     *
+     * @param  mixed $name
+     * @return array
+     */
+    public function getCompanyLike(string $name): array
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+        $company = $queryBuilder
+        ->select('c.id, c.name')
+        ->where("c.name LIKE :name")
+        ->setParameter('name', '%' . $name . '%')
+        ->getQuery()
+        ->execute();
 
         return $company;
     }

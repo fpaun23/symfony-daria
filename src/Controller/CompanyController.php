@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
 use App\Entity\Company;
@@ -14,6 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CompanyRepository;
+use App\Validator\CompanyValidator;
 
 /**
  * class for company controller
@@ -21,11 +21,10 @@ use App\Repository\CompanyRepository;
 class CompanyController extends AbstractController
 {
     private CompanyRepository $companyRepository;
-
     /**
      * __construct
      *
-     * @param  mixed $logger
+     * @param  mixed $companyRepository
      * @return void
      */
     public function __construct(CompanyRepository $companyRepository)
@@ -33,9 +32,9 @@ class CompanyController extends AbstractController
         $this->companyRepository = $companyRepository;
     }
     /**
-     * adds Company to the db
+     * add
      *
-     * @param  mixed $doctrine
+     * @param  mixed $request
      * @return Response
      */
     public function addCompany(Request $request): Response
@@ -44,32 +43,30 @@ class CompanyController extends AbstractController
         $company = new Company();
         $company->setName($name);
         $companySaved = $this->companyRepository->save($company);
-
         return new JsonResponse(
             [
-             'saved' => $companySaved,
+             'saved' => $companySaved
             ]
         );
     }
     /**
-     * updates company name with id
+     * updateCompany
      *
-     * @param  mixed $doctrine
+     * @param  mixed $request
      * @param  mixed $id
      * @return Response
      */
     public function updateCompany(Request $request, int $id): Response
     {
         $requestParams = $request->query->all();
-        $updateResult = $this->companyRepository->update($id, $requestParams);
-
+        $updateResult = $this->companyRepository->updateCompany($id, $requestParams);
         return new JsonResponse(
             [
                 'rows_updated' => $updateResult
             ]
         );
     }
-     /**
+    /**
      * deleteCompany
      *
      * @param  mixed $id
@@ -77,14 +74,13 @@ class CompanyController extends AbstractController
      */
     public function deleteCompany(int $id): Response
     {
-        $companyForDelete = $this->companyRepository->find($id);
-        $companyDeleted = $this->companyRepository->remove($companyForDelete);
-
-        return new JsonResponse(
-            [
-                'rows_deleted' => $companyDeleted
-            ]
-        );
+            $companyForDelete = $this->companyRepository->find($id);
+            $companyDeleted = $this->companyRepository->remove($companyForDelete);
+            return new JsonResponse(
+                [
+                    'rows_deleted' => $companyDeleted
+                ]
+            );
     }
     /**
      * listCompany
@@ -93,52 +89,53 @@ class CompanyController extends AbstractController
      */
     public function listCompany(): Response
     {
-        $company = $this->companyRepository->listCompany();
+            $companyList = $this->companyRepository->listCompany();
 
-        return new JsonResponse(
-            [
-                'rows' => $company
-            ]
-        );
+            return new JsonResponse(
+                [
+                    'rows' => $companyList
+                ]
+            );
     }
     /**
-     * companyId
+     * getCompanyById
      *
      * @param  mixed $id
      * @return Response
      */
-    public function companyId(int $id): Response
+    public function getCompanyById(int $id): Response
     {
-        $company = $this->companyRepository->getCompanyId($id);
-
+        $companybyId = $this->companyRepository->getCompanyId($id);
         return new JsonResponse(
             [
-                'rows' => $company
+                'rows' => $companybyId
             ]
         );
     }
-     /**
-     * companyName
+    /**
+     * getCompanyByName
      *
      * @param  mixed $name
      * @return Response
      */
-    public function companyName(string $name): Response
+    public function getCompanyByName(string $name): Response
     {
-        $company = $this->companyRepository->getCompanyName($name);
-
-        return new JsonResponse($company);
+        $companyByName = $this->companyRepository->getCompanyName($name);
+        return new JsonResponse($companyByName);
     }
     /**
-     * likeCompanyName
+     * getCompanyNameLike
      *
      * @param  mixed $name
      * @return Response
      */
-    public function likeCompanyName(string $name): Response
+    public function getCompanyNameLike(string $name): Response
     {
-        $company = $this->companyRepository->getLikeCompanyName($name);
-
-        return new JsonResponse($company);
+            $companyLike = $this->companyRepository->getCompanyLike($name);
+            return new JsonResponse(
+                [
+                    'rows' => $companyLike
+                ]
+            );
     }
 }
