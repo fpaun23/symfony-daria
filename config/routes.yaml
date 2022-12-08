@@ -10,6 +10,7 @@ company_controller_add:
     path: /company/addCompany
     controller: App\Controller\CompanyController::addCompany
     methods: POST
+
 company_controller_list:
     path: /company/listCompany
     controller: App\Controller\CompanyController::listCompany
@@ -27,15 +28,15 @@ company_controller_delete:
 
 company_companyId:
     path: /company/{id}
-    controller: App\Controller\CompanyController::companyId
+    controller: App\Controller\CompanyController::getCompanyById
     methods: GET
 
 company_companyName:
     path: /company/name/{name}
-    controller: App\Controller\CompanyController::companyName
+    controller: App\Controller\CompanyController::getCompanyByName
     methods: GET
     
 company_like_companyName:
     path: /company/like/{name}
-    controller: App\Controller\CompanyController::likeCompanyName
+    controller: App\Controller\CompanyController::getCompanyNameLike
     methods: GET

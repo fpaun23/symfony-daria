@@ -4,16 +4,11 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
-use Psr\Log\LoggerInterface;
 use App\Entity\Company;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CompanyRepository;
+use App\Validators\CompanyValidator;
 
 /**
  * class for company controller
@@ -21,55 +16,88 @@ use App\Repository\CompanyRepository;
 class CompanyController extends AbstractController
 {
     private CompanyRepository $companyRepository;
+    private CompanyValidator $companyValidator;
 
     /**
      * __construct
      *
-     * @param  mixed $logger
+     * @param  mixed $companyRepository
+     * @param  mixed $companyValidator
      * @return void
      */
-    public function __construct(CompanyRepository $companyRepository)
+    public function __construct(CompanyRepository $companyRepository, CompanyValidator $companyValidator)
     {
         $this->companyRepository = $companyRepository;
+        $this->companyValidator = $companyValidator;
     }
     /**
-     * adds Company to the db
+     * addCompany
      *
-     * @param  mixed $doctrine
+     * @param  mixed $request
      * @return Response
      */
     public function addCompany(Request $request): Response
     {
-        $name = $request->get('name');
-        $company = new Company();
-        $company->setName($name);
-        $companySaved = $this->companyRepository->save($company);
-
-        return new JsonResponse(
-            [
-             'saved' => $companySaved,
-            ]
-        );
+        try {
+            $name = $request->get('name');
+            $companies = $request->query->all();
+            $this->companyValidator->validToArray($companies);
+            $company = new Company();
+            $company->setName($name);
+            $companySaved = $this->companyRepository->save($company);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'saved' => $companySaved,
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage(),
+                    ]
+                ]
+            );
+        }
     }
     /**
-     * updates company name with id
+     * updateCompany
      *
-     * @param  mixed $doctrine
+     * @param  mixed $request
      * @param  mixed $id
      * @return Response
      */
     public function updateCompany(Request $request, int $id): Response
     {
-        $requestParams = $request->query->all();
-        $updateResult = $this->companyRepository->update($id, $requestParams);
+        try {
+            $updateData = $request->query->all();
+            $this->companyValidator->validToArray($updateData);
+            $updateResult = $this->companyRepository->update($id, $updateData);
 
-        return new JsonResponse(
-            [
-                'rows_updated' => $updateResult
-            ]
-        );
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows_updated' => $updateResult
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
-     /**
+    /**
      * deleteCompany
      *
      * @param  mixed $id
@@ -77,14 +105,28 @@ class CompanyController extends AbstractController
      */
     public function deleteCompany(int $id): Response
     {
-        $companyForDelete = $this->companyRepository->find($id);
-        $companyDeleted = $this->companyRepository->remove($companyForDelete);
-
-        return new JsonResponse(
-            [
-                'rows_deleted' => $companyDeleted
-            ]
-        );
+        try {
+            $this->companyValidator->idIsValid($id);
+            $companyToDelete = $this->companyRepository->find($id);
+            $companyDeleted = $this->companyRepository->remove($companyToDelete);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows_deleted' => $companyDeleted
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
     /**
      * listCompany
@@ -93,52 +135,103 @@ class CompanyController extends AbstractController
      */
     public function listCompany(): Response
     {
-        $company = $this->companyRepository->listCompany();
+            $company = $this->companyRepository->listCompany();
 
-        return new JsonResponse(
-            [
-                'rows' => $company
-            ]
-        );
+            return new JsonResponse(
+                [
+                    'rows' => $company
+                ]
+            );
     }
     /**
-     * companyId
+     * getCompanyById
      *
      * @param  mixed $id
      * @return Response
      */
-    public function companyId(int $id): Response
+    public function getCompanyById(int $id): Response
     {
-        $company = $this->companyRepository->getCompanyId($id);
+        try {
+            $this->companyValidator->idIsValid($id);
+            $company = $this->companyRepository->getCompanyId($id);
 
-        return new JsonResponse(
-            [
-                'rows' => $company
-            ]
-        );
-    }
-     /**
-     * companyName
-     *
-     * @param  mixed $name
-     * @return Response
-     */
-    public function companyName(string $name): Response
-    {
-        $company = $this->companyRepository->getCompanyName($name);
-
-        return new JsonResponse($company);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows' => $company
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
     /**
-     * likeCompanyName
+     * getCompanyByName
      *
      * @param  mixed $name
      * @return Response
      */
-    public function likeCompanyName(string $name): Response
+    public function getCompanyByName(string $name): Response
     {
-        $company = $this->companyRepository->getLikeCompanyName($name);
-
-        return new JsonResponse($company);
+        try {
+            $this->companyValidator->nameIsValid($name);
+            $company = $this->companyRepository->getCompanyName($name);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows' => $company
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
+    }
+    /**
+     * getCompanyNameLike
+     *
+     * @param  mixed $name
+     * @return Response
+     */
+    public function getCompanyNameLike(string $name): Response
+    {
+        try {
+            $this->companyValidator->nameIsValid($name);
+            $company = $this->companyRepository->getCompanyLike($name);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows' => $company
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
 }
