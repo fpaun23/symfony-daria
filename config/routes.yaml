@@ -7,22 +7,22 @@ company_controller:
     controller: App\Controller\CompanyController::loadTemplate
 
 company_controller_add:
-    path: /company/addCompany
+    path: /company/add
     controller: App\Controller\CompanyController::addCompany
     methods: POST
 
 company_controller_list:
-    path: /company/listCompany
+    path: /company/list
     controller: App\Controller\CompanyController::listCompany
     methods: GET
 
 company_controller_update:
-    path: /company/updateCompany/{id}
+    path: /company/update/{id}
     controller: App\Controller\CompanyController::updateCompany
     methods: PUT
 
 company_controller_delete:
-    path: /company/deleteCompany/{id}
+    path: /company/delete/{id}
     controller: App\Controller\CompanyController::deleteCompany
     methods: DELETE
 
@@ -40,3 +40,4 @@ company_like_companyName:
     path: /company/like/{name}
     controller: App\Controller\CompanyController::getCompanyNameLike
     methods: GET
+ 
