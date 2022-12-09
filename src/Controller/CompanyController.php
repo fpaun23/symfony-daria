@@ -4,16 +4,11 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
-use Psr\Log\LoggerInterface;
 use App\Entity\Company;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CompanyRepository;
-use App\Validator\CompanyValidator;
+use App\Validators\CompanyValidator;
 
 /**
  * class for company controller
@@ -21,33 +16,53 @@ use App\Validator\CompanyValidator;
 class CompanyController extends AbstractController
 {
     private CompanyRepository $companyRepository;
+    private CompanyValidator $companyValidator;
+    
     /**
      * __construct
      *
      * @param  mixed $companyRepository
+     * @param  mixed $companyValidator
      * @return void
      */
-    public function __construct(CompanyRepository $companyRepository)
+    public function __construct(CompanyRepository $companyRepository, CompanyValidator $companyValidator)
     {
         $this->companyRepository = $companyRepository;
+        $this->companyValidator = $companyValidator;
     }
     /**
-     * add
+     * addCompany
      *
      * @param  mixed $request
      * @return Response
      */
     public function addCompany(Request $request): Response
     {
-        $name = $request->get('name');
-        $company = new Company();
-        $company->setName($name);
-        $companySaved = $this->companyRepository->save($company);
-        return new JsonResponse(
-            [
-             'saved' => $companySaved
-            ]
-        );
+        try {
+            $name = $request->get('name');
+            $companies = $request->query->all();
+            $this->companyValidator->validToArray($companies);
+            $company = new Company();
+            $company->setName($name);
+            $companySaved = $this->companyRepository->save($company);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'saved' => $companySaved,
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage(),
+                    ]
+                ]
+            );
+        }
     }
     /**
      * updateCompany
@@ -58,13 +73,29 @@ class CompanyController extends AbstractController
      */
     public function updateCompany(Request $request, int $id): Response
     {
-        $requestParams = $request->query->all();
-        $updateResult = $this->companyRepository->updateCompany($id, $requestParams);
-        return new JsonResponse(
-            [
-                'rows_updated' => $updateResult
-            ]
-        );
+        try {
+            $updateData = $request->query->all();
+            $this->companyValidator->validToArray($updateData);
+            $updateResult = $this->companyRepository->update($id, $updateData);
+
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows_updated' => $updateResult
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
     /**
      * deleteCompany
@@ -74,13 +105,28 @@ class CompanyController extends AbstractController
      */
     public function deleteCompany(int $id): Response
     {
-            $companyForDelete = $this->companyRepository->find($id);
-            $companyDeleted = $this->companyRepository->remove($companyForDelete);
+        try {
+            $this->companyValidator->idIsValid($id);
+            $companyToDelete = $this->companyRepository->find($id);
+            $companyDeleted = $this->companyRepository->remove($companyToDelete);
             return new JsonResponse(
                 [
-                    'rows_deleted' => $companyDeleted
+                    'results' => [
+                        'error' => false,
+                        'rows_deleted' => $companyDeleted
+                    ]
                 ]
             );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
     /**
      * listCompany
@@ -90,7 +136,6 @@ class CompanyController extends AbstractController
     public function listCompany(): Response
     {
             $companyList = $this->companyRepository->listCompany();
-
             return new JsonResponse(
                 [
                     'rows' => $companyList
@@ -105,12 +150,28 @@ class CompanyController extends AbstractController
      */
     public function getCompanyById(int $id): Response
     {
-        $companybyId = $this->companyRepository->getCompanyId($id);
-        return new JsonResponse(
-            [
-                'rows' => $companybyId
-            ]
-        );
+        try {
+            $this->companyValidator->idIsValid($id);
+            $company = $this->companyRepository->getCompanyId($id);
+
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows' => $company
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
     /**
      * getCompanyByName
@@ -120,8 +181,27 @@ class CompanyController extends AbstractController
      */
     public function getCompanyByName(string $name): Response
     {
-        $companyByName = $this->companyRepository->getCompanyName($name);
-        return new JsonResponse($companyByName);
+        try {
+            $this->companyValidator->nameIsValid($name);
+            $company = $this->companyRepository->getCompanyName($name);
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => false,
+                        'rows' => $company
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
     /**
      * getCompanyNameLike
@@ -131,11 +211,26 @@ class CompanyController extends AbstractController
      */
     public function getCompanyNameLike(string $name): Response
     {
-            $companyLike = $this->companyRepository->getCompanyLike($name);
+        try {
+            $this->companyValidator->nameIsValid($name);
+            $company = $this->companyRepository->getCompanyLike($name);
             return new JsonResponse(
                 [
-                    'rows' => $companyLike
+                    'results' => [
+                        'error' => false,
+                        'rows' => $company
+                    ]
                 ]
             );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
     }
 }
