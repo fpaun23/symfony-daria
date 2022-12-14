@@ -46,23 +46,23 @@ job_controller:
     controller: App\Controller\JobController::loadTemplate
 
 job_controller_add:
-    path: /job/addJob
-    controller: App\Controller\JobController::addJob
+    path: /job/add
+    controller: App\Controller\JobController::add
     methods: POST
 
 job_controller_list:
-    path: /job/listJob
-    controller: App\Controller\JobController::listJob
+    path: /job/list
+    controller: App\Controller\JobController::list
     methods: GET
 
 job_controller_update:
-    path: /job/updateJob/{id}
-    controller: App\Controller\JobController::updateJob
+    path: /job/update/{id}
+    controller: App\Controller\JobController::update
     methods: PUT
 
 job_controller_delete:
-    path: /job/deleteJob/{id}
-    controller: App\Controller\JobController::deleteJob
+    path: /job/delete/{id}
+    controller: App\Controller\JobController::delete
     methods: DELETE
 
 job_jobId:

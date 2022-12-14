@@ -45,14 +45,18 @@ class JobRepository extends ServiceEntityRepository
         $queryBuilder = $this ->createQueryBuilder('j');
 
         $nbUpdatedRows = $queryBuilder ->update()
-            ->set('j.name', ':jobName')
-            //->set('j.description', ':jobDescription')
             ->where('j.id = :jobId')
-            ->setParameter('jobName', $params['name'])
-            //->setParameter('jobDescription', $params['description'])
-            ->setParameter('jobId', $id)
-            ->getQuery()
-            ->execute();
+            ->setParameter('jobId', $id);
+        if (!empty($params['name'])) {
+                $queryBuilder->set('j.name', ':jobName');
+                $queryBuilder->setParameter('jobName', $params['name']);
+        }
+        if (!empty($params['description'])) {
+                $queryBuilder->set('j.description', ':jobDescription');
+                $queryBuilder->setParameter('jobDescription', $params['description']);
+        }
+
+            $nbUpdatedRows = $queryBuilder->getQuery()->execute();
 
             return $nbUpdatedRows;
     }
@@ -85,7 +89,7 @@ class JobRepository extends ServiceEntityRepository
 
         $job = $queryBuilder
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
 
         return $job;
     }
@@ -99,8 +103,8 @@ class JobRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('j');
         $job = $queryBuilder
-            ->select('j.name')
-            ->where("j.id = $id")
+            ->where("j.id =:jobId")
+            ->setParameter('jobId', $id)
             ->getQuery()
             ->execute();
 
@@ -116,7 +120,6 @@ class JobRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('j');
         $job = $queryBuilder
-        ->select('j.name')
         ->where("j.name = :jobName")
         ->setParameter('jobName', $name)
         ->getQuery()
@@ -134,7 +137,6 @@ class JobRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('j');
         $job = $queryBuilder
-        ->select('j.id, j.name')
         ->where("j.name LIKE :name")
         ->setParameter('name', '%' . $name . '%')
         ->getQuery()

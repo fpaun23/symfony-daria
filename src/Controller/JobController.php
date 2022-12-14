@@ -37,20 +37,17 @@ class JobController extends AbstractController
         $this->companyRepository = $companyRepository;
     }
     /**
-     * addJob
+     * add
      *
      * @param  mixed $request
      * @return Response
      */
-    public function addJob(Request $request): Response
+    public function add(Request $request): Response
     {
         $active = 0;
         $priority = 0;
         try {
             $name = $request->get('name');
-            // $description = $request->get('description');
-            // $active = (int) $request->get('active');
-            // $priority = (int) $request->get('priority');
             $this->jobValidator->nameIsValid($name);
             $companyId = (int) $request->get('company_id');
             $company = $this->companyRepository->find($companyId);
@@ -85,19 +82,18 @@ class JobController extends AbstractController
         }
     }
     /**
-     * updateJob
+     * update
      *
      * @param  mixed $request
      * @param  mixed $id
      * @return Response
      */
-    public function updateJob(Request $request, int $id): Response
+    public function update(Request $request, int $id): Response
     {
         try {
             $updateData = $request->query->all();
             $this->jobValidator->validToArray($updateData);
             $updateResult = $this->jobRepository->update($id, $updateData);
-
             return new JsonResponse(
                 [
                     'results' => [
@@ -118,12 +114,12 @@ class JobController extends AbstractController
         }
     }
     /**
-     * deleteJob
+     * delete
      *
      * @param  mixed $id
      * @return Response
      */
-    public function deleteJob(int $id): Response
+    public function delete(int $id): Response
     {
         try {
             $this->jobValidator->idIsValid($id);
@@ -149,19 +145,35 @@ class JobController extends AbstractController
         }
     }
     /**
-     * listJob
+     * list
      *
      * @return Response
      */
-    public function listJob(): Response
+    public function list(): Response
     {
-            $job = $this->jobRepository->listjob();
-
-            return new JsonResponse(
-                [
-                    'rows' => $job
+        $job = $this->jobRepository->listjob();
+        $jobArr = [];
+        foreach ($job as $foundjob) {
+                $jobArr[] = [
+                    'id' => $foundjob->getId(),
+                    'name' => $foundjob->getName(),
+                    'description' => $foundjob->getDescription(),
+                    'active' => $foundjob->getActive(),
+                    'priority' => $foundjob->getPriority(),
+                    'company' => [
+                        'id' => $foundjob->getCompany() ->getId(),
+                        'name' => $foundjob->getCompany()->getName(),
+                    ]
+                ];
+        }
+        return new JsonResponse(
+            [
+                'results' => [
+                    'error' => false,
+                    'rows_deleted' => $jobArr
                 ]
-            );
+            ]
+        );
     }
     /**
      * getJobById
@@ -173,13 +185,27 @@ class JobController extends AbstractController
     {
         try {
             $this->jobValidator->idIsValid($id);
+            $jobArr = [];
             $job = $this->jobRepository->getJobId($id);
+            foreach ($job as $foundjob) {
+                $jobArr[] = [
+                    'id' => $foundjob->getId(),
+                    'name' => $foundjob->getName(),
+                    'description' => $foundjob->getDescription(),
+                    'active' => $foundjob->getActive(),
+                    'priority' => $foundjob->getPriority(),
+                    'company' => [
+                        'id' => $foundjob->getCompany()->getId(),
+                        'name' => $foundjob->getCompany()->getName(),
+                    ]
+                ];
+            }
 
             return new JsonResponse(
                 [
                     'results' => [
                         'error' => false,
-                        'rows' => $job
+                        'rows' => $jobArr
                     ]
                 ]
             );
@@ -204,12 +230,26 @@ class JobController extends AbstractController
     {
         try {
             $this->jobValidator->nameIsValid($name);
+            $jobArr = [];
             $job = $this->jobRepository->getJobName($name);
+            foreach ($job as $foundjob) {
+                $jobArr[] = [
+                    'id' => $foundjob->getId(),
+                    'name' => $foundjob->getName(),
+                    'description' => $foundjob->getDescription(),
+                    'active' => $foundjob->getActive(),
+                    'priority' => $foundjob->getPriority(),
+                    'company' => [
+                        'id' => $foundjob->getCompany() ->getId(),
+                        'name' => $foundjob->getCompany()->getName(),
+                    ]
+                ];
+            }
             return new JsonResponse(
                 [
                     'results' => [
                         'error' => false,
-                        'rows' => $job
+                        'rows' => $jobArr
                     ]
                 ]
             );
@@ -239,7 +279,7 @@ class JobController extends AbstractController
                 [
                     'results' => [
                         'error' => false,
-                        'rows' => $job
+                        'rows' =>  $job
                     ]
                 ]
             );
