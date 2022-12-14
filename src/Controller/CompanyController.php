@@ -17,7 +17,7 @@ class CompanyController extends AbstractController
 {
     private CompanyRepository $companyRepository;
     private CompanyValidator $companyValidator;
-
+    
     /**
      * __construct
      *
@@ -135,11 +135,10 @@ class CompanyController extends AbstractController
      */
     public function listCompany(): Response
     {
-            $company = $this->companyRepository->listCompany();
-
+            $companyList = $this->companyRepository->listCompany();
             return new JsonResponse(
                 [
-                    'rows' => $company
+                    'rows' => $companyList
                 ]
             );
     }
