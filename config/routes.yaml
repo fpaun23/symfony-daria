@@ -40,4 +40,42 @@ company_like_companyName:
     path: /company/like/{name}
     controller: App\Controller\CompanyController::getCompanyNameLike
     methods: GET
- 
+
+job_controller:
+    path: /job
+    controller: App\Controller\JobController::loadTemplate
+
+job_controller_add:
+    path: /job/add
+    controller: App\Controller\JobController::add
+    methods: POST
+
+job_controller_list:
+    path: /job/list
+    controller: App\Controller\JobController::list
+    methods: GET
+
+job_controller_update:
+    path: /job/update/{id}
+    controller: App\Controller\JobController::update
+    methods: PUT
+
+job_controller_delete:
+    path: /job/delete/{id}
+    controller: App\Controller\JobController::delete
+    methods: DELETE
+
+job_jobId:
+    path: /job/{id}
+    controller: App\Controller\JobController::getJobById
+    methods: GET
+
+job_jobName:
+    path: /job/name/{name}
+    controller: App\Controller\JobController::getJobByName
+    methods: GET
+    
+job_like_jobName:
+    path: /job/like/{name}
+    controller: App\Controller\JobController::getJobNameLike
+    methods: GET
