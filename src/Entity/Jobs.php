@@ -75,7 +75,7 @@ class Jobs
 
         return $this;
     }
-
+    
     public function getCompanyId(): ?int
     {
         return $this->company;
