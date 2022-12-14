@@ -43,18 +43,19 @@ class JobRepository extends ServiceEntityRepository
     public function update(int $id, array $params): int
     {
         $queryBuilder = $this ->createQueryBuilder('j');
-
         $nbUpdatedRows = $queryBuilder ->update()
+            ->set('j.name', ':jobName')
+            ->set('j.description', ':jobDescription')
+            ->set('j.active', ':jobActive')
+            ->set('j.priority', ':jobPriority')
             ->where('j.id = :jobId')
-            ->setParameter('jobId', $id);
-        if (!empty($params['name'])) {
-                $queryBuilder->set('j.name', ':jobName');
-                $queryBuilder->setParameter('jobName', $params['name']);
-        }
-        if (!empty($params['description'])) {
-                $queryBuilder->set('j.description', ':jobDescription');
-                $queryBuilder->setParameter('jobDescription', $params['description']);
-        }
+            ->setParameter('jobName', $params['name'])
+            ->setParameter('jobDescription', $params['description'])
+            ->setParameter('jobActive', $params['active'])
+            ->setParameter('jobPriority', $params['priority'])
+            ->setParameter('jobId', $id)
+            ->getQuery()
+            ->execute();
 
             $nbUpdatedRows = $queryBuilder->getQuery()->execute();
 

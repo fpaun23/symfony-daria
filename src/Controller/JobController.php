@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Jobs;
-use App\Entity\Company;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\JobRepository;
 use App\Validators\JobValidator;
@@ -66,7 +65,7 @@ class JobController extends AbstractController
                 [
                     'results' => [
                         'error' => false,
-                        'saved' => $jobSaved,
+                        'jobs_added' => $jobSaved,
                     ]
                 ]
             );
@@ -98,7 +97,7 @@ class JobController extends AbstractController
                 [
                     'results' => [
                         'error' => false,
-                        'rows_updated' => $updateResult
+                        'jobs_updated' => $updateResult
                     ]
                 ]
             );
@@ -124,12 +123,16 @@ class JobController extends AbstractController
         try {
             $this->jobValidator->idIsValid($id);
             $jobToDelete = $this->jobRepository->find($id);
-            $jobDeleted = $this->jobRepository->remove($jobToDelete);
+            $jobDeletedId = $jobToDelete->getId();
+            if (is_null($jobToDelete)) {
+                throw new \InvalidArgumentException('Could not find job with id: ' . $id);
+            }
+            $this->jobRepository->remove($jobToDelete);
             return new JsonResponse(
                 [
                     'results' => [
                         'error' => false,
-                        'rows_deleted' => $jobDeleted
+                        'deleted_job_id' => !empty($jobDeletedId)
                     ]
                 ]
             );
@@ -170,7 +173,7 @@ class JobController extends AbstractController
             [
                 'results' => [
                     'error' => false,
-                    'rows_deleted' => $jobArr
+                    'jobs' => $jobArr
                 ]
             ]
         );
@@ -205,7 +208,7 @@ class JobController extends AbstractController
                 [
                     'results' => [
                         'error' => false,
-                        'rows' => $jobArr
+                        'jobs' => $jobArr
                     ]
                 ]
             );
@@ -240,7 +243,7 @@ class JobController extends AbstractController
                     'active' => $foundjob->getActive(),
                     'priority' => $foundjob->getPriority(),
                     'company' => [
-                        'id' => $foundjob->getCompany() ->getId(),
+                        'id' => $foundjob->getCompany()->getId(),
                         'name' => $foundjob->getCompany()->getName(),
                     ]
                 ];
@@ -249,7 +252,7 @@ class JobController extends AbstractController
                 [
                     'results' => [
                         'error' => false,
-                        'rows' => $jobArr
+                        'jobs' => $jobArr
                     ]
                 ]
             );
@@ -274,12 +277,26 @@ class JobController extends AbstractController
     {
         try {
             $this->jobValidator->nameIsValid($name);
+            $jobArr = [];
             $job = $this->jobRepository->getJobLike($name);
+            foreach ($job as $foundjob) {
+                $jobArr[] = [
+                    'id' => $foundjob->getId(),
+                    'name' => $foundjob->getName(),
+                    'description' => $foundjob->getDescription(),
+                    'active' => $foundjob->getActive(),
+                    'priority' => $foundjob->getPriority(),
+                    'company' => [
+                        'id' => $foundjob->getCompany() ->getId(),
+                        'name' => $foundjob->getCompany()->getName(),
+                    ]
+                ];
+            }
             return new JsonResponse(
                 [
                     'results' => [
                         'error' => false,
-                        'rows' =>  $job
+                        'jobs' => $jobArr
                     ]
                 ]
             );
