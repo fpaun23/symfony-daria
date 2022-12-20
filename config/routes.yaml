@@ -8,22 +8,22 @@ company_controller:
 
 company_controller_add:
     path: /company/add
-    controller: App\Controller\CompanyController::addCompany
+    controller: App\Controller\CompanyController::add
     methods: POST
 
 company_controller_list:
     path: /company/list
-    controller: App\Controller\CompanyController::listCompany
+    controller: App\Controller\CompanyController::list
     methods: GET
 
 company_controller_update:
     path: /company/update/{id}
-    controller: App\Controller\CompanyController::updateCompany
+    controller: App\Controller\CompanyController::update
     methods: PUT
 
 company_controller_delete:
     path: /company/delete/{id}
-    controller: App\Controller\CompanyController::deleteCompany
+    controller: App\Controller\CompanyController::delete
     methods: DELETE
 
 company_companyId:
@@ -42,45 +42,45 @@ company_like_companyName:
     methods: GET
 
 job_controller:
-    path: /job
+    path: /jobs
     controller: App\Controller\JobController::loadTemplate
 
 job_controller_add:
-    path: /job/add
+    path: /jobs/add
     controller: App\Controller\JobController::add
     methods: POST
 
 job_controller_list:
-    path: /job/list
+    path: /jobs/list
     controller: App\Controller\JobController::list
     methods: GET
 
 job_controller_update:
-    path: /job/update/{id}
+    path: /jobs/update/{id}
     controller: App\Controller\JobController::update
     methods: PUT
 
 job_controller_delete:
-    path: /job/delete/{id}
+    path: /jobs/delete/{id}
     controller: App\Controller\JobController::delete
     methods: DELETE
 
 job_jobId:
-    path: /job/{id}
+    path: /jobs/{id}
     controller: App\Controller\JobController::getJobById
     methods: GET
 
 job_jobName:
-    path: /job/name/{name}
+    path: /jobs/name/{name}
     controller: App\Controller\JobController::getJobByName
     methods: GET
     
 job_like_jobName:
-    path: /job/like/{name}
+    path: /jobs/like/{name}
     controller: App\Controller\JobController::getJobNameLike
     methods: GET
 
 job_bulk:
-    path: /job/bulk
+    path: /jobs/bulk
     controller: App\Controller\JobController::bulk
     methods: GET

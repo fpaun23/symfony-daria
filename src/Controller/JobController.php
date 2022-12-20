@@ -317,6 +317,7 @@ class JobController extends AbstractController
     public function bulk(): Response
     {
         try {
+            $jobArr = [];
             $jobArr = $this->reader->getData();
             return new JsonResponse(
                 [

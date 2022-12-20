@@ -17,7 +17,7 @@ class CompanyController extends AbstractController
 {
     private CompanyRepository $companyRepository;
     private CompanyValidator $companyValidator;
-    
+
     /**
      * __construct
      *
@@ -36,7 +36,7 @@ class CompanyController extends AbstractController
      * @param  mixed $request
      * @return Response
      */
-    public function addCompany(Request $request): Response
+    public function add(Request $request): Response
     {
         try {
             $name = $request->get('name');
@@ -71,7 +71,7 @@ class CompanyController extends AbstractController
      * @param  mixed $id
      * @return Response
      */
-    public function updateCompany(Request $request, int $id): Response
+    public function update(Request $request, int $id): Response
     {
         try {
             $updateData = $request->query->all();
@@ -103,7 +103,7 @@ class CompanyController extends AbstractController
      * @param  mixed $id
      * @return Response
      */
-    public function deleteCompany(int $id): Response
+    public function delete(int $id): Response
     {
         try {
             $this->companyValidator->idIsValid($id);
@@ -133,7 +133,7 @@ class CompanyController extends AbstractController
      *
      * @return Response
      */
-    public function listCompany(): Response
+    public function list(): Response
     {
             $companyList = $this->companyRepository->listCompany();
             return new JsonResponse(

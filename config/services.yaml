@@ -22,9 +22,9 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     job_service_interface:
-        class: App\Service\File\FileReaderServiceInterface
+        class: App\Service\FileReaderServiceInterface
 
     job_service:
         class: App\Service\Jobs\JobsService
         arguments:
-            -'@App\Service\File\FileReaderServiceJson'
+            - '@App\Service\FileReaderServiceJson'

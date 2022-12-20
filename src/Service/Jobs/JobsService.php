@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Service\FileReaderServiceInterface;
 
-class JobService
+class JobsService
 {
     public FileReaderServiceInterface $reader;
     public function __construct(FileReaderServiceInterface $reader)
