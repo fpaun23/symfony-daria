@@ -79,3 +79,8 @@ job_like_jobName:
     path: /job/like/{name}
     controller: App\Controller\JobController::getJobNameLike
     methods: GET
+
+job_bulk:
+    path: /job/bulk
+    controller: App\Controller\JobController::bulk
+    methods: GET

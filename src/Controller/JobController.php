@@ -8,9 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Jobs;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\JobRepository;
-use App\Validators\JobValidator;
+use App\Validators\Job\JobDataValidator;
 use App\Repository\CompanyRepository;
 use DateTimeImmutable;
+use App\Service\FileReaderServiceInterface;
 
 /**
  * JobController
@@ -19,7 +20,8 @@ class JobController extends AbstractController
 {
     private JobRepository $jobRepository;
     private CompanyRepository $companyRepository;
-    private JobValidator $jobValidator;
+    private JobDataValidator $jobValidator;
+    private FileReaderServiceInterface $reader;
 
     /**
      * __construct
@@ -29,11 +31,12 @@ class JobController extends AbstractController
      * @param  mixed $jobValidator
      * @return void
      */
-    public function __construct(JobRepository $jobRepository, CompanyRepository $companyRepository, JobValidator $jobValidator)
+    public function __construct(JobRepository $jobRepository, CompanyRepository $companyRepository, FileReaderServiceInterface $reader, JobDataValidator $jobValidator)
     {
         $this->jobRepository = $jobRepository;
-        $this->jobValidator = $jobValidator;
         $this->companyRepository = $companyRepository;
+        $this->jobValidator = $jobValidator;
+        $this->reader = $reader;
     }
     /**
      * add
@@ -298,6 +301,29 @@ class JobController extends AbstractController
                         'error' => false,
                         'jobs' => $jobArr
                     ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return new JsonResponse(
+                [
+                    'results' => [
+                        'error' => true,
+                        'message' => $e->getMessage()
+                    ]
+                ]
+            );
+        }
+    }
+    public function bulk(): Response
+    {
+        try {
+            $jobArr = $this->reader->getData();
+            return new JsonResponse(
+                [
+                'results' => [
+                    'error' => false,
+                    'jobs' => $jobArr
+                ]
                 ]
             );
         } catch (\Exception $e) {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\Job;
 
 /**
  * JobValidator
  */
-class JobValidator
+class JobDataValidator
 {
     /**
      * nameIsValid

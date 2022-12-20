@@ -84,59 +84,6 @@ class CompanyRepository extends ServiceEntityRepository
             ->getArrayResult();
 
         return $company;
-    } 
-    /**
-     * getCompanyId
-     *
-     * @param  mixed $id
-     * @return array
-     */
-    public function getCompanyId(int $id): array
-    {
-        $queryBuilder = $this->createQueryBuilder('c');
-        $company = $queryBuilder
-            ->select('c.name')
-            ->where("c.id = $id")
-            ->getQuery()
-            ->execute();
-
-        return $company;
-    } 
-    /**
-     * getCompanyName
-     *
-     * @param  mixed $name
-     * @return array
-     */
-    public function getCompanyName(string $name): array
-    {
-        $queryBuilder = $this->createQueryBuilder('c');
-        $company = $queryBuilder
-        ->select('c.name')
-        ->where("c.name = :companyName")
-        ->setParameter('companyName', $name)
-        ->getQuery()
-        ->execute();
-
-        return $company;
-    }
-    /**
-     * getCompanyLike
-     *
-     * @param  mixed $name
-     * @return array
-     */
-    public function getCompanyLike(string $name): array
-    {
-        $queryBuilder = $this->createQueryBuilder('c');
-        $company = $queryBuilder
-        ->select('c.id, c.name')
-        ->where("c.name LIKE :name")
-        ->setParameter('name', '%' . $name . '%')
-        ->getQuery()
-        ->execute();
-
-        return $company;
     }
     /**
      * getCompanyId
